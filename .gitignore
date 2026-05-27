@@ -1,0 +1,47 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Runtime data
+uploads/
+outputs/
+*.log
+
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Large model artifacts: keep these in Kaggle Dataset or another model storage.
+checkpoints/**
+!checkpoints/
+!checkpoints/**/
+!checkpoints/**/arch.json
+
+sklearn_models/*
+!sklearn_models/.gitkeep
+
+# Optional local training artifacts
+data/
