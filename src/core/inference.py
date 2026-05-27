@@ -154,12 +154,6 @@ def _resolve_batch_size(batch_size: int | None) -> int:
     return max(1, resolved)
 
 
-def _run_model_batch(model: tf.keras.Model, batch: ndarray) -> ndarray:
-    batch_tensor = tf.convert_to_tensor(batch, dtype=tf.float32)
-    with _tf_predict_lock:
-        return model(batch_tensor, training=False).numpy()
-
-
 def inference(
     model_path: str,
     img_path: str,
@@ -200,7 +194,8 @@ def inference(
         batch = np.array(
             [image[y: y + win_size, x: x + win_size] for y, x in batch_positions]
         )
-        out_batch = _run_model_batch(model, batch)
+        with _tf_predict_lock:
+            out_batch = model.predict(batch, verbose=0)
 
         for hop, (y, x) in zip(out_batch, batch_positions):
             out[y: y + win_size, x: x + win_size] += hop
@@ -229,7 +224,8 @@ def warmup_models() -> None:
             continue
         dummy = np.zeros((1, win_size, win_size, 3), dtype=np.uint8)
         logger.info("Warming up TensorFlow model: %s", model_dir)
-        _run_model_batch(model, dummy)
+        with _tf_predict_lock:
+            model.predict(dummy, verbose=0)
 
 
 def predict(region: ndarray, model_name: str) -> str:
